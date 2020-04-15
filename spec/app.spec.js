@@ -128,6 +128,42 @@ describe("app", () => {
               });
             });
         });
+        it("status: 404 not found if given valid but non-existent article_id", () => {
+          return request(app)
+            .patch("/api/articles/9999999")
+            .send({ inc_votes: 5 })
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("article not found");
+            });
+        });
+        it("status: 400 bad request if given invalid article_id", () => {
+          return request(app)
+            .patch("/api/articles/not-id")
+            .send({ inc_votes: 5 })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("invalid data type");
+            });
+        });
+        it("status: 400 for wrong property given", () => {
+          return request(app)
+            .patch("/api/articles/1")
+            .send({ bananas: 10 })
+            .expect(400)
+            .then((response) => {
+              expect(response.body.msg).to.equal("bad request");
+            });
+        });
+        it("status: 400 wrong data type given for inc_votes", () => {
+          return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes: "five" })
+            .expect(400)
+            .then((response) => {
+              expect(response.body.msg).to.equal("wrong data type");
+            });
+        });
       });
     });
   });

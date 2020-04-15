@@ -18,11 +18,23 @@ exports.fetchArticle = (given_article_id) => {
 };
 
 exports.modifyArticle = (given_article_id, inc_votes) => {
-  return connection("articles")
-    .where("article_id", "=", given_article_id)
-    .returning("*")
-    .then((article) => {
-      article[0].votes += inc_votes;
-      return article[0];
-    });
+  if (inc_votes === undefined) {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  } else {
+    return connection("articles")
+      .where("article_id", "=", given_article_id)
+      .returning("*")
+      .then((article) => {
+        if (article.length === 0) {
+          return Promise.reject({ status: 404, msg: "article not found" });
+        } else {
+          article[0].votes += inc_votes;
+          if (typeof article[0].votes !== "number") {
+            return Promise.reject({ status: 400, msg: "wrong data type" });
+          } else {
+            return article[0];
+          }
+        }
+      });
+  }
 };
