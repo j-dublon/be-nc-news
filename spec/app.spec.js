@@ -33,7 +33,27 @@ describe("app", () => {
     describe("/api/users/:username", () => {
       describe("GET", () => {
         it("returned user has the correct keys", () => {
-          return request(app).get("/api/users/:username").expect(200);
+          return request(app)
+            .get("/api/users/butter_bridge")
+            .expect(200)
+            .then((res) => {
+              expect(res.body).to.deep.equal({
+                user: {
+                  username: "butter_bridge",
+                  name: "jonny",
+                  avatar_url:
+                    "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+                },
+              });
+            });
+        });
+        it("status: 404 for non-existent user name", () => {
+          return request(app)
+            .get("/api/users/not_a_user")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("user not found");
+            });
         });
       });
     });
