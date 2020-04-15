@@ -30,11 +30,29 @@ exports.modifyArticle = (given_article_id, inc_votes) => {
         } else {
           article[0].votes += inc_votes;
           if (typeof article[0].votes !== "number") {
-            return Promise.reject({ status: 400, msg: "wrong data type" });
+            return Promise.reject({ status: 400, msg: "invalid data type" });
           } else {
             return article[0];
           }
         }
+      });
+  }
+};
+
+exports.addArticleComment = (article_id, username, body) => {
+  const comment = { author: username, body, article_id };
+  if (
+    (typeof comment.body !== "string" && comment.body !== undefined) ||
+    (typeof comment.username !== "string" && comment.username !== undefined)
+  ) {
+    return Promise.reject({ status: 400, msg: "invalid data type" });
+  } else {
+    return connection
+      .insert(comment)
+      .into("comments")
+      .returning("*")
+      .then((comment) => {
+        return comment[0];
       });
   }
 };

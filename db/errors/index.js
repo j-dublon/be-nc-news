@@ -5,6 +5,8 @@ exports.handleInvalidPaths = (req, res, next) => {
 exports.handlePSQLErrors = (err, req, res, next) => {
   const codes = {
     "22P02": { status: 400, msg: "invalid data type" },
+    23503: { status: 404, msg: "article not found" },
+    23502: { status: 400, msg: "missing property" },
   };
   if (err.code in codes) {
     const { status, msg } = codes[err.code];

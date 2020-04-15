@@ -108,7 +108,7 @@ describe("app", () => {
             });
         });
       });
-      describe.only("PATCH", () => {
+      describe("PATCH", () => {
         it("status: 200 updates the votes property and responds with the updated article", () => {
           return request(app)
             .patch("/api/articles/1")
@@ -146,7 +146,7 @@ describe("app", () => {
               expect(msg).to.equal("invalid data type");
             });
         });
-        it("status: 400 for wrong property given", () => {
+        it("status: 400 for invalid property given", () => {
           return request(app)
             .patch("/api/articles/1")
             .send({ bananas: 10 })
@@ -155,13 +155,67 @@ describe("app", () => {
               expect(response.body.msg).to.equal("bad request");
             });
         });
-        it("status: 400 wrong data type given for inc_votes", () => {
+        it("status: 400 invalid data type given for inc_votes", () => {
           return request(app)
             .patch("/api/articles/1")
             .send({ inc_votes: "five" })
             .expect(400)
             .then((response) => {
-              expect(response.body.msg).to.equal("wrong data type");
+              expect(response.body.msg).to.equal("invalid data type");
+            });
+        });
+      });
+      describe("POST", () => {
+        it("status: 201 inserts a new comment on an article and responds with the comment object", () => {
+          return request(app)
+            .post("/api/articles/2/comments")
+            .send({ username: "rogersop", body: "this is amazing" })
+            .expect(201)
+            .then(({ body: { comment } }) => {
+              expect(comment).to.have.all.keys(
+                "comment_id",
+                "author",
+                "article_id",
+                "votes",
+                "created_at",
+                "body"
+              );
+            });
+        });
+        it("status: 404 not found if given valid but non-existent article_id", () => {
+          return request(app)
+            .post("/api/articles/9999999/comments")
+            .send({ username: "rogersop", body: "this is amazing" })
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("article not found");
+            });
+        });
+        it("status: 400 if given invalid article_id", () => {
+          return request(app)
+            .post("/api/articles/not-id/comments")
+            .send({ username: "rogersop", body: "this is amazing" })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("invalid data type");
+            });
+        });
+        it("status: 400 if missing a non-nullable key", () => {
+          return request(app)
+            .post("/api/articles/2/comments")
+            .send({ body: "this is amazing" })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("missing property");
+            });
+        });
+        it("status: 400 invalid data type provided", () => {
+          return request(app)
+            .post("/api/articles/2/comments")
+            .send({ username: "rogersop", body: 567 })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("invalid data type");
             });
         });
       });
