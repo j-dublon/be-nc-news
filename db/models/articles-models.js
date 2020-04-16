@@ -66,7 +66,14 @@ exports.fetchArticleComments = (
     return Promise.reject({ status: 400, msg: "bad request" });
   } else {
     return connection
-      .select("*")
+      .select(
+        "comment_id",
+        "votes",
+        "created_at",
+        "author",
+        "body",
+        "article_id"
+      )
       .from("comments")
       .where("comments.article_id", "=", article_id)
       .orderBy(sort_by, order)

@@ -441,11 +441,11 @@ describe("app", () => {
       });
     });
     describe("/api/comments/:comment_id", () => {
-      describe.only("PATCH", () => {
+      describe("PATCH", () => {
         it("status: 200 updates a comment's votes property and returns the comment object", () => {
           return request(app)
             .patch("/api/comments/1")
-            .send({ inc_votes: 5 })
+            .send({ inc_votes: -5 })
             .expect(200)
             .then(({ body }) => {
               expect(body).to.deep.equal({
@@ -453,7 +453,7 @@ describe("app", () => {
                   comment_id: 1,
                   author: "butter_bridge",
                   article_id: 9,
-                  votes: 21,
+                  votes: 11,
                   created_at: "2017-11-22T12:36:03.389Z",
                   body:
                     "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
@@ -461,7 +461,7 @@ describe("app", () => {
               });
             });
         });
-        it("status: 404 not found if given valid but non-existent comment_id", () => {
+        it("status: 404 if given valid but non-existent comment_id", () => {
           return request(app)
             .patch("/api/comments/9999999")
             .send({ inc_votes: 5 })
@@ -495,6 +495,35 @@ describe("app", () => {
             .expect(400)
             .then((response) => {
               expect(response.body.msg).to.equal("invalid data type");
+            });
+        });
+      });
+      describe("DELETE", () => {
+        it("status: 204 deletes a comment by id", () => {
+          return request(app)
+            .del("/api/comments/1")
+            .expect(204)
+            .then(() => {
+              return connection("comments").where({ comment_id: 1 });
+            })
+            .then((comment) => {
+              expect(comment.length).to.equal(0);
+            });
+        });
+        it("status: 404 if given valid but non-existent comment_id", () => {
+          return request(app)
+            .del("/api/comments/9999999")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("comment not found");
+            });
+        });
+        it("status: 400 if given invalid comment_id", () => {
+          return request(app)
+            .del("/api/comments/not-id")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("invalid data type");
             });
         });
       });

@@ -21,3 +21,15 @@ exports.modifyComment = (comment_id, inc_votes) => {
       });
   }
 };
+
+exports.removeComment = (comment_id) => {
+  return connection("comments")
+    .where("comment_id", "=", comment_id)
+    .del()
+    .returning("*")
+    .then((comment) => {
+      if (comment.length === 0) {
+        return Promise.reject({ status: 404, msg: "comment not found" });
+      }
+    });
+};
