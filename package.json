@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/northcoders/be-nc-news#readme",
   "dependencies": {
+    "chai-sorted": "^0.2.0",
     "express": "^4.17.1",
     "knex": "^0.20.14",
     "pg": "^8.0.2"

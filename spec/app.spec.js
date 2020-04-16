@@ -4,6 +4,7 @@ const request = require("supertest");
 const connection = require("../db/connection");
 const chai = require("chai");
 const expect = chai.expect;
+chai.use(require("chai-sorted"));
 
 describe("app", () => {
   beforeEach(() => connection.seed.run());
@@ -165,6 +166,8 @@ describe("app", () => {
             });
         });
       });
+    });
+    describe("/api/articles/:article_id/comments", () => {
       describe("POST", () => {
         it("status: 201 inserts a new comment on an article and responds with the comment object", () => {
           return request(app)
@@ -216,6 +219,99 @@ describe("app", () => {
             .expect(400)
             .then(({ body: { msg } }) => {
               expect(msg).to.equal("invalid data type");
+            });
+        });
+      });
+      describe.only("GET", () => {
+        it("should return all comments associated with an article", () => {
+          return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body: { comments } }) => {
+              expect(comments.length).to.equal(13);
+            });
+        });
+        it("returned comments should have the correct properties", () => {
+          return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body: { comments } }) => {
+              comments.forEach((comment) => {
+                expect(comment).to.have.all.keys(
+                  "article_id",
+                  "comment_id",
+                  "votes",
+                  "created_at",
+                  "author",
+                  "body"
+                );
+              });
+            });
+        });
+        it("accepts a query to sort by any valid column", () => {
+          return request(app)
+            .get("/api/articles/5/comments?sort_by=votes")
+            .expect(200)
+            .then(({ body: { comments } }) => {
+              expect(comments).to.be.sortedBy("votes", { descending: true });
+            });
+        });
+        it("default sort_by is created_at", () => {
+          return request(app)
+            .get("/api/articles/5/comments")
+            .expect(200)
+            .then(({ body: { comments } }) => {
+              expect(comments).to.be.sortedBy("created_at", {
+                descending: true,
+              });
+            });
+        });
+        it("accepts a query to order by either ascending or descending", () => {
+          return request(app)
+            .get("/api/articles/5/comments?order=asc")
+            .expect(200)
+            .then(({ body: { comments } }) => {
+              expect(comments).to.be.ascendingBy("created_at");
+            });
+        });
+        it("default order is descending", () => {
+          return request(app)
+            .get("/api/articles/5/comments")
+            .expect(200)
+            .then(({ body: { comments } }) => {
+              expect(comments).to.be.descendingBy("created_at");
+            });
+        });
+        it("status: 404 not found if given valid but non-existent article_id", () => {
+          return request(app)
+            .get("/api/articles/9999999/comments")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("article not found");
+            });
+        });
+        it("status: 400 bad request if given invalid article_id", () => {
+          return request(app)
+            .get("/api/articles/not-id/comments")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("invalid data type");
+            });
+        });
+        it("status: 400 for an invalid sort by query", () => {
+          return request(app)
+            .get("/api/articles/1/comments?sort_by=banana")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("bad request");
+            });
+        });
+        it("status: 400 for an invalid order query", () => {
+          return request(app)
+            .get("/api/articles/1/comments?order=sideways")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("bad request");
             });
         });
       });

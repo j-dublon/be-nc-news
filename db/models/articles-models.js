@@ -56,3 +56,27 @@ exports.addArticleComment = (article_id, username, body) => {
       });
   }
 };
+
+exports.fetchArticleComments = (
+  article_id,
+  sort_by = "created_at",
+  order = "desc"
+) => {
+  console.log(order);
+  if (order !== "asc" && order !== "desc") {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  } else {
+    return connection
+      .select("*")
+      .from("comments")
+      .where("comments.article_id", "=", article_id)
+      .orderBy(sort_by, order)
+      .then((comments) => {
+        if (comments.length === 0) {
+          return Promise.reject({ status: 404, msg: "article not found" });
+        } else {
+          return comments;
+        }
+      });
+  }
+};

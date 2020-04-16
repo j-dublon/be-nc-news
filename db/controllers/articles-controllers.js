@@ -2,6 +2,7 @@ const {
   fetchArticle,
   modifyArticle,
   addArticleComment,
+  fetchArticleComments,
 } = require("../models/articles-models");
 
 exports.sendArticle = (req, res, next) => {
@@ -29,6 +30,16 @@ exports.insertArticleComment = (req, res, next) => {
   addArticleComment(article_id, username, body)
     .then((comment) => {
       res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+
+exports.sendArticleComments = (req, res, next) => {
+  const { article_id } = req.params;
+  const { sort_by, order } = req.query;
+  fetchArticleComments(article_id, sort_by, order)
+    .then((comments) => {
+      res.status(200).send({ comments });
     })
     .catch(next);
 };
