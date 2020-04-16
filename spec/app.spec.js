@@ -464,7 +464,7 @@ describe("app", () => {
               });
             });
         });
-        it.only("status: 200 responds with empty array when specified author has no associated articles", () => {
+        it("status: 200 responds with empty array when specified author has no associated articles", () => {
           return request(app)
             .get("/api/articles?author=lurker")
             .expect(200)
@@ -472,7 +472,7 @@ describe("app", () => {
               expect(articles.length).to.equal(0);
             });
         });
-        it.only("status: 200 responds with empty array when specified topic has no associated articles", () => {
+        it("status: 200 responds with empty array when specified topic has no associated articles", () => {
           return request(app)
             .get("/api/articles?topic=paper")
             .expect(200)
@@ -496,20 +496,20 @@ describe("app", () => {
               expect(msg).to.equal("bad request");
             });
         });
-        it.only("status: 404 for filter by non-existent author request", () => {
+        it("status: 404 for filter by non-existent author request", () => {
           return request(app)
             .get("/api/articles?author=nobody")
             .expect(404)
             .then(({ body: { msg } }) => {
-              expect(msg).to.equal("articles not found");
+              expect(msg).to.equal("author does not exist");
             });
         });
-        it.only("status: 404 for filter by non-existent topic request", () => {
+        it("status: 404 for filter by non-existent topic request", () => {
           return request(app)
             .get("/api/articles?topic=nothing")
             .expect(404)
             .then(({ body: { msg } }) => {
-              expect(msg).to.equal("articles not found");
+              expect(msg).to.equal("topic does not exist");
             });
         });
       });

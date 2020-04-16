@@ -64,25 +64,29 @@ exports.fetchAllArticles = (
 };
 
 exports.checkAuthorExists = (author) => {
-  return connection
-    .select("username")
-    .from("users")
-    .where("users.username", "=", author)
-    .then((authors) => {
-      if (authors.length === 0) {
-        return Promise.reject({ status: 404, msg: "articles not found" });
-      }
-    });
+  if (author) {
+    return connection
+      .select("username")
+      .from("users")
+      .where("users.username", "=", author)
+      .then((authors) => {
+        if (authors.length === 0) {
+          return Promise.reject({ status: 404, msg: "author does not exist" });
+        }
+      });
+  }
 };
 
 exports.checkTopicExists = (topic) => {
-  return connection
-    .select("description")
-    .from("topics")
-    .where("topics.slug", "=", topic)
-    .then((topics) => {
-      if (topics.length === 0) {
-        return Promise.reject({ status: 404, msg: "articles not found" });
-      }
-    });
+  if (topic) {
+    return connection
+      .select("description")
+      .from("topics")
+      .where("topics.slug", "=", topic)
+      .then((topics) => {
+        if (topics.length === 0) {
+          return Promise.reject({ status: 404, msg: "topic does not exist" });
+        }
+      });
+  }
 };
