@@ -51,6 +51,31 @@ describe("formatDates", () => {
       expect(article.created_at).to.deep.equal(jsTime);
     });
   });
+  it("does not mutate original array", () => {
+    const timestampNow = Date.now();
+    const jsTimeNow = new Date(timestampNow);
+    const input = [
+      {
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: timestampNow,
+        votes: 100,
+      },
+    ];
+    formatDates(input);
+    expect(input).to.deep.equal([
+      {
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: timestampNow,
+        votes: 100,
+      },
+    ]);
+  });
 });
 
 describe("makeRefObj", () => {
@@ -97,6 +122,31 @@ describe("makeRefObj", () => {
       "Eight pug gifs that remind me of mitch": 3,
     };
     expect(makeRefObj(input)).to.deep.equal(expected);
+  });
+  it("does not mutate original array", () => {
+    const input = [
+      {
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: 1542284514171,
+        votes: 100,
+        article_id: 1,
+      },
+    ];
+    makeRefObj(input);
+    expect(input).to.deep.equal([
+      {
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: 1542284514171,
+        votes: 100,
+        article_id: 1,
+      },
+    ]);
   });
 });
 
@@ -173,5 +223,31 @@ describe("formatComments", () => {
         created_at: jsTime2,
       },
     ];
+    expect(formatComments(comments, articleRef)).to.deep.equal(expected);
+  });
+  it("does not mutate original array", () => {
+    const comments = [
+      {
+        body:
+          "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+        belongs_to: "Living in the shadow of a great man",
+        created_by: "butter_bridge",
+        votes: 14,
+        created_at: 1479818163389,
+      },
+    ];
+    const articleRef = { "Living in the shadow of a great man": 1 };
+    const jsTime = new Date(1479818163389);
+    formatComments(comments, articleRef);
+    expect(comments).to.deep.equal([
+      {
+        body:
+          "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+        belongs_to: "Living in the shadow of a great man",
+        created_by: "butter_bridge",
+        votes: 14,
+        created_at: 1479818163389,
+      },
+    ]);
   });
 });
