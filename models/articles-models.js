@@ -17,22 +17,18 @@ exports.fetchArticle = (given_article_id) => {
     });
 };
 
-exports.modifyArticle = (given_article_id, inc_votes) => {
-  if (inc_votes === undefined) {
-    return Promise.reject({ status: 400, msg: "bad request" });
-  } else {
-    return connection("articles")
-      .where("article_id", "=", given_article_id)
-      .increment("votes", inc_votes)
-      .returning("*")
-      .then((article) => {
-        if (article.length === 0) {
-          return Promise.reject({ status: 404, msg: "article not found" });
-        } else {
-          return article[0];
-        }
-      });
-  }
+exports.modifyArticle = (given_article_id, inc_votes = 0) => {
+  return connection("articles")
+    .where("article_id", "=", given_article_id)
+    .increment("votes", inc_votes)
+    .returning("*")
+    .then((article) => {
+      if (article.length === 0) {
+        return Promise.reject({ status: 404, msg: "article not found" });
+      } else {
+        return article[0];
+      }
+    });
 };
 
 exports.fetchAllArticles = (
@@ -63,13 +59,30 @@ exports.fetchAllArticles = (
       })
       .modify((query) => {
         if (topic) query.where("articles.topic", topic);
-      })
-      .then((articles) => {
-        if (articles.length === 0) {
-          return Promise.reject({ status: 404, msg: "articles not found" });
-        } else {
-          return articles;
-        }
       });
   }
+};
+
+exports.checkAuthorExists = (author) => {
+  return connection
+    .select("username")
+    .from("users")
+    .where("users.username", "=", author)
+    .then((authors) => {
+      if (authors.length === 0) {
+        return Promise.reject({ status: 404, msg: "articles not found" });
+      }
+    });
+};
+
+exports.checkTopicExists = (topic) => {
+  return connection
+    .select("description")
+    .from("topics")
+    .where("topics.slug", "=", topic)
+    .then((topics) => {
+      if (topics.length === 0) {
+        return Promise.reject({ status: 404, msg: "articles not found" });
+      }
+    });
 };

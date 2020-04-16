@@ -2,11 +2,14 @@ const {
   fetchArticle,
   modifyArticle,
   fetchAllArticles,
+  checkAuthorExists,
+  checkTopicExists,
 } = require("../models/articles-models");
 
 const {
   addArticleComment,
   fetchArticleComments,
+  checkArticleExists,
 } = require("../models/comments-models");
 
 exports.sendArticle = (req, res, next) => {
@@ -41,8 +44,11 @@ exports.insertArticleComment = (req, res, next) => {
 exports.sendArticleComments = (req, res, next) => {
   const { article_id } = req.params;
   const { sort_by, order } = req.query;
-  fetchArticleComments(article_id, sort_by, order)
-    .then((comments) => {
+  Promise.all([
+    checkArticleExists(article_id),
+    fetchArticleComments(article_id, sort_by, order),
+  ])
+    .then(([, comments]) => {
       res.status(200).send({ comments });
     })
     .catch(next);
@@ -50,8 +56,12 @@ exports.sendArticleComments = (req, res, next) => {
 
 exports.sendAllArticles = (req, res, next) => {
   const { sort_by, order, author, topic } = req.query;
-  fetchAllArticles(sort_by, order, author, topic)
-    .then((articles) => {
+  Promise.all([
+    checkAuthorExists(author),
+    checkTopicExists(topic),
+    fetchAllArticles(sort_by, order, author, topic),
+  ])
+    .then(([, articles]) => {
       res.status(200).send({ articles });
     })
     .catch(next);

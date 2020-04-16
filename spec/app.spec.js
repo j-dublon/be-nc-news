@@ -157,6 +157,25 @@ describe("app", () => {
               });
             });
         });
+        it("status: 200 ignores a patch request with an empty request body and responds with unchanged article", () => {
+          return request(app)
+            .patch("/api/articles/1")
+            .send({})
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).to.deep.equal({
+                article: {
+                  article_id: 1,
+                  title: "Living in the shadow of a great man",
+                  body: "I find this existence challenging",
+                  votes: 100,
+                  topic: "mitch",
+                  author: "butter_bridge",
+                  created_at: "2018-11-15T12:21:54.171Z",
+                },
+              });
+            });
+        });
         it("status: 404 if given valid but non-existent article_id", () => {
           return request(app)
             .patch("/api/articles/9999999")
@@ -173,15 +192,6 @@ describe("app", () => {
             .expect(400)
             .then(({ body: { msg } }) => {
               expect(msg).to.equal("invalid data type");
-            });
-        });
-        it("status: 400 for invalid property given", () => {
-          return request(app)
-            .patch("/api/articles/1")
-            .send({ bananas: 10 })
-            .expect(400)
-            .then((response) => {
-              expect(response.body.msg).to.equal("bad request");
             });
         });
         it("status: 400 invalid data type given for inc_votes", () => {
@@ -271,6 +281,14 @@ describe("app", () => {
             .expect(200)
             .then(({ body: { comments } }) => {
               expect(comments.length).to.equal(13);
+            });
+        });
+        it("status: 200 responds with empty array when article exists but has no comments", () => {
+          return request(app)
+            .get("/api/articles/12/comments")
+            .expect(200)
+            .then(({ body: { comments } }) => {
+              expect(comments.length).to.equal(0);
             });
         });
         it("status: 200 returned comments should have the correct properties", () => {
@@ -446,6 +464,22 @@ describe("app", () => {
               });
             });
         });
+        it.only("status: 200 responds with empty array when specified author has no associated articles", () => {
+          return request(app)
+            .get("/api/articles?author=lurker")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles.length).to.equal(0);
+            });
+        });
+        it.only("status: 200 responds with empty array when specified topic has no associated articles", () => {
+          return request(app)
+            .get("/api/articles?topic=paper")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles.length).to.equal(0);
+            });
+        });
         it("status: 400 for an invalid sort_by query", () => {
           return request(app)
             .get("/api/articles?sort_by=banana")
@@ -462,7 +496,7 @@ describe("app", () => {
               expect(msg).to.equal("bad request");
             });
         });
-        it("status: 404 for filter by non-existent author request", () => {
+        it.only("status: 404 for filter by non-existent author request", () => {
           return request(app)
             .get("/api/articles?author=nobody")
             .expect(404)
@@ -470,25 +504,9 @@ describe("app", () => {
               expect(msg).to.equal("articles not found");
             });
         });
-        it("status: 404 for filter by non-existent topic request", () => {
+        it.only("status: 404 for filter by non-existent topic request", () => {
           return request(app)
             .get("/api/articles?topic=nothing")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal("articles not found");
-            });
-        });
-        it("status: 404 for filter by author request - no associated articles", () => {
-          return request(app)
-            .get("/api/articles?author=lurker")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal("articles not found");
-            });
-        });
-        it("status: 404 for filter by topic request - no associated articles", () => {
-          return request(app)
-            .get("/api/articles?topic=paper")
             .expect(404)
             .then(({ body: { msg } }) => {
               expect(msg).to.equal("articles not found");
@@ -531,6 +549,25 @@ describe("app", () => {
               });
             });
         });
+        it("status: 200 ignores a patch request with an empty request body and responds with unchanged comment", () => {
+          return request(app)
+            .patch("/api/comments/1")
+            .send({})
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).to.deep.equal({
+                comment: {
+                  comment_id: 1,
+                  author: "butter_bridge",
+                  article_id: 9,
+                  votes: 16,
+                  created_at: "2017-11-22T12:36:03.389Z",
+                  body:
+                    "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                },
+              });
+            });
+        });
         it("status: 404 if given valid but non-existent comment_id", () => {
           return request(app)
             .patch("/api/comments/9999999")
@@ -547,15 +584,6 @@ describe("app", () => {
             .expect(400)
             .then(({ body: { msg } }) => {
               expect(msg).to.equal("invalid data type");
-            });
-        });
-        it("status: 400 for invalid property given", () => {
-          return request(app)
-            .patch("/api/comments/1")
-            .send({ bananas: 10 })
-            .expect(400)
-            .then((response) => {
-              expect(response.body.msg).to.equal("bad request");
             });
         });
         it("status: 400 invalid data type given for inc_votes", () => {

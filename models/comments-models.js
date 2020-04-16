@@ -1,21 +1,17 @@
 const connection = require("../connection");
 
-exports.modifyComment = (comment_id, inc_votes) => {
-  if (inc_votes === undefined) {
-    return Promise.reject({ status: 400, msg: "bad request" });
-  } else {
-    return connection("comments")
-      .where("comment_id", "=", comment_id)
-      .increment("votes", inc_votes)
-      .returning("*")
-      .then((comment) => {
-        if (comment.length === 0) {
-          return Promise.reject({ status: 404, msg: "comment not found" });
-        } else {
-          return comment[0];
-        }
-      });
-  }
+exports.modifyComment = (comment_id, inc_votes = 0) => {
+  return connection("comments")
+    .where("comment_id", "=", comment_id)
+    .increment("votes", inc_votes)
+    .returning("*")
+    .then((comment) => {
+      if (comment.length === 0) {
+        return Promise.reject({ status: 404, msg: "comment not found" });
+      } else {
+        return comment[0];
+      }
+    });
 };
 
 exports.removeComment = (comment_id) => {
@@ -67,13 +63,18 @@ exports.fetchArticleComments = (
       )
       .from("comments")
       .where("comments.article_id", "=", article_id)
-      .orderBy(sort_by, order)
-      .then((comments) => {
-        if (comments.length === 0) {
-          return Promise.reject({ status: 404, msg: "article not found" });
-        } else {
-          return comments;
-        }
-      });
+      .orderBy(sort_by, order);
   }
+};
+
+exports.checkArticleExists = (article_id) => {
+  return connection
+    .select("body")
+    .from("articles")
+    .where("articles.article_id", "=", article_id)
+    .then((articles) => {
+      if (articles.length === 0) {
+        return Promise.reject({ status: 404, msg: "article not found" });
+      }
+    });
 };
