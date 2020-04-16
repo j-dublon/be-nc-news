@@ -7,7 +7,7 @@ const {
   sendArticleComments,
   sendAllArticles,
 } = require("../controllers/articles-controllers");
-const { send405Error } = require("../errors/index");
+const { send405Error } = require("../errors");
 
 articlesRouter
   .route("/:article_id")

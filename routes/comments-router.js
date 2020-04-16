@@ -4,7 +4,7 @@ const {
   updateComment,
   deleteComment,
 } = require("../controllers/comments-controller");
-const { send405Error } = require("../errors/index");
+const { send405Error } = require("../errors");
 
 commentsRouter
   .route("/:comment_id")

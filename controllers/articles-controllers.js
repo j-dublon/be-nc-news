@@ -1,10 +1,13 @@
 const {
   fetchArticle,
   modifyArticle,
-  addArticleComment,
-  fetchArticleComments,
   fetchAllArticles,
 } = require("../models/articles-models");
+
+const {
+  addArticleComment,
+  fetchArticleComments,
+} = require("../models/comments-models");
 
 exports.sendArticle = (req, res, next) => {
   const { article_id } = req.params;
