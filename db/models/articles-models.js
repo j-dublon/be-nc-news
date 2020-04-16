@@ -62,7 +62,6 @@ exports.fetchArticleComments = (
   sort_by = "created_at",
   order = "desc"
 ) => {
-  console.log(order);
   if (order !== "asc" && order !== "desc") {
     return Promise.reject({ status: 400, msg: "bad request" });
   } else {
@@ -76,6 +75,45 @@ exports.fetchArticleComments = (
           return Promise.reject({ status: 404, msg: "article not found" });
         } else {
           return comments;
+        }
+      });
+  }
+};
+
+exports.fetchAllArticles = (
+  sort_by = "created_at",
+  order = "desc",
+  author,
+  topic
+) => {
+  if (order !== "asc" && order !== "desc") {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  } else {
+    return connection
+      .select(
+        "articles.author",
+        "title",
+        "articles.article_id",
+        "topic",
+        "articles.created_at",
+        "articles.votes"
+      )
+      .from("articles")
+      .count({ comment_count: "comments.article_id" })
+      .leftJoin("comments", "comments.article_id", "articles.article_id")
+      .groupBy("articles.article_id")
+      .orderBy(sort_by, order)
+      .modify((query) => {
+        if (author) query.where("articles.author", author);
+      })
+      .modify((query) => {
+        if (topic) query.where("articles.topic", topic);
+      })
+      .then((articles) => {
+        if (articles.length === 0) {
+          return Promise.reject({ status: 404, msg: "articles not found" });
+        } else {
+          return articles;
         }
       });
   }

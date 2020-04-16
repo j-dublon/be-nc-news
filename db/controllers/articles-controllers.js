@@ -3,6 +3,7 @@ const {
   modifyArticle,
   addArticleComment,
   fetchArticleComments,
+  fetchAllArticles,
 } = require("../models/articles-models");
 
 exports.sendArticle = (req, res, next) => {
@@ -40,6 +41,15 @@ exports.sendArticleComments = (req, res, next) => {
   fetchArticleComments(article_id, sort_by, order)
     .then((comments) => {
       res.status(200).send({ comments });
+    })
+    .catch(next);
+};
+
+exports.sendAllArticles = (req, res, next) => {
+  const { sort_by, order, author, topic } = req.query;
+  fetchAllArticles(sort_by, order, author, topic)
+    .then((articles) => {
+      res.status(200).send({ articles });
     })
     .catch(next);
 };

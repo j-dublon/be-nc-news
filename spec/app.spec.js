@@ -222,7 +222,7 @@ describe("app", () => {
             });
         });
       });
-      describe.only("GET", () => {
+      describe("GET", () => {
         it("should return all comments associated with an article", () => {
           return request(app)
             .get("/api/articles/1/comments")
@@ -266,7 +266,7 @@ describe("app", () => {
               });
             });
         });
-        it("accepts a query to order by either ascending or descending", () => {
+        it("accepts a query to order ascending", () => {
           return request(app)
             .get("/api/articles/5/comments?order=asc")
             .expect(200)
@@ -312,6 +312,130 @@ describe("app", () => {
             .expect(400)
             .then(({ body: { msg } }) => {
               expect(msg).to.equal("bad request");
+            });
+        });
+      });
+    });
+    describe("/api/articles", () => {
+      describe("GET", () => {
+        it("returned articles have the correct keys", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              articles.forEach((article) => {
+                expect(article).to.have.all.keys(
+                  "author",
+                  "title",
+                  "article_id",
+                  "topic",
+                  "created_at",
+                  "votes",
+                  "comment_count"
+                );
+              });
+            });
+        });
+        it("accepts a query to sort by any valid column", () => {
+          return request(app)
+            .get("/api/articles?sort_by=votes")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles).to.be.sortedBy("votes", { descending: true });
+            });
+        });
+        it("default sort_by is created_at", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles).to.be.sortedBy("created_at", {
+                descending: true,
+              });
+            });
+        });
+        it("accepts a query to order ascending", () => {
+          return request(app)
+            .get("/api/articles?order=asc")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles).to.be.ascendingBy("created_at");
+            });
+        });
+        it("default order is descending", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles).to.be.descendingBy("created_at");
+            });
+        });
+        it("accepts a query to filter articles by specified author", () => {
+          return request(app)
+            .get("/api/articles?author=rogersop")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              articles.forEach((article) => {
+                expect(article.author).to.equal("rogersop");
+              });
+            });
+        });
+        it("accepts a query to filter articles by specified topic", () => {
+          return request(app)
+            .get("/api/articles?topic=cats")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              articles.forEach((article) => {
+                expect(article.topic).to.equal("cats");
+              });
+            });
+        });
+        it("status: 400 for an invalid sort_by query", () => {
+          return request(app)
+            .get("/api/articles?sort_by=banana")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("bad request");
+            });
+        });
+        it("status: 400 for an invalid order query", () => {
+          return request(app)
+            .get("/api/articles?order=sideways")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("bad request");
+            });
+        });
+        it("status: 404 for filter by non-existent author request", () => {
+          return request(app)
+            .get("/api/articles?author=nobody")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("articles not found");
+            });
+        });
+        it("status: 404 for filter by non-existent topic request", () => {
+          return request(app)
+            .get("/api/articles?topic=nothing")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("articles not found");
+            });
+        });
+        it("status: 404 for filter by author request - no associated articles", () => {
+          return request(app)
+            .get("/api/articles?author=lurker")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("articles not found");
+            });
+        });
+        it("status: 404 for filter by topic request - no associated articles", () => {
+          return request(app)
+            .get("/api/articles?topic=paper")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("articles not found");
             });
         });
       });
