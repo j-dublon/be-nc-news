@@ -20,7 +20,7 @@ describe("app", () => {
   describe("/api", () => {
     describe("/api/topics", () => {
       describe("GET", () => {
-        it("returned topics should have correct keys", () => {
+        it("status: 200 returned topics should have correct keys", () => {
           return request(app)
             .get("/api/topics")
             .expect(200)
@@ -34,7 +34,7 @@ describe("app", () => {
     });
     describe("/api/users/:username", () => {
       describe("GET", () => {
-        it("returns the correct user", () => {
+        it("status: 200 returns the correct user", () => {
           return request(app)
             .get("/api/users/butter_bridge")
             .expect(200)
@@ -61,7 +61,7 @@ describe("app", () => {
     });
     describe("/api/articles/:article_id", () => {
       describe("GET", () => {
-        it("returned article should have the correct keys", () => {
+        it("status: 200 returned article should have the correct keys", () => {
           return request(app)
             .get("/api/articles/1")
             .expect(200)
@@ -78,7 +78,7 @@ describe("app", () => {
               );
             });
         });
-        it("returned article has accurate comment_count", () => {
+        it("status: 200 returned article has accurate comment_count", () => {
           return request(app)
             .get("/api/articles/1")
             .expect(200)
@@ -92,7 +92,7 @@ describe("app", () => {
               }
             );
         });
-        it("status: 404 not found if given valid but non-existent article_id", () => {
+        it("status: 404 if given valid but non-existent article_id", () => {
           return request(app)
             .get("/api/articles/9999999")
             .expect(404)
@@ -100,7 +100,7 @@ describe("app", () => {
               expect(msg).to.equal("article not found");
             });
         });
-        it("status: 400 bad request if given invalid article_id", () => {
+        it("status: 400 if given invalid article_id", () => {
           return request(app)
             .get("/api/articles/not-id")
             .expect(400)
@@ -110,13 +110,13 @@ describe("app", () => {
         });
       });
       describe("PATCH", () => {
-        it("status: 200 updates the votes property and responds with the updated article", () => {
+        it("status: 200 updates an article's votes property and responds with the updated article", () => {
           return request(app)
             .patch("/api/articles/1")
             .send({ inc_votes: 5 })
             .expect(200)
-            .then((res) => {
-              expect(res.body).to.deep.equal({
+            .then(({ body }) => {
+              expect(body).to.deep.equal({
                 article: {
                   article_id: 1,
                   title: "Living in the shadow of a great man",
@@ -129,7 +129,7 @@ describe("app", () => {
               });
             });
         });
-        it("status: 404 not found if given valid but non-existent article_id", () => {
+        it("status: 404 if given valid but non-existent article_id", () => {
           return request(app)
             .patch("/api/articles/9999999")
             .send({ inc_votes: 5 })
@@ -138,7 +138,7 @@ describe("app", () => {
               expect(msg).to.equal("article not found");
             });
         });
-        it("status: 400 bad request if given invalid article_id", () => {
+        it("status: 400 if given invalid article_id", () => {
           return request(app)
             .patch("/api/articles/not-id")
             .send({ inc_votes: 5 })
@@ -185,7 +185,7 @@ describe("app", () => {
               );
             });
         });
-        it("status: 404 not found if given valid but non-existent article_id", () => {
+        it("status: 404 if given valid but non-existent article_id", () => {
           return request(app)
             .post("/api/articles/9999999/comments")
             .send({ username: "rogersop", body: "this is amazing" })
@@ -223,7 +223,7 @@ describe("app", () => {
         });
       });
       describe("GET", () => {
-        it("should return all comments associated with an article", () => {
+        it("status: 200 should return all comments associated with an article", () => {
           return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
@@ -231,7 +231,7 @@ describe("app", () => {
               expect(comments.length).to.equal(13);
             });
         });
-        it("returned comments should have the correct properties", () => {
+        it("status: 200 returned comments should have the correct properties", () => {
           return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
@@ -248,7 +248,7 @@ describe("app", () => {
               });
             });
         });
-        it("accepts a query to sort by any valid column", () => {
+        it("status: 200 accepts a query to sort by any valid column", () => {
           return request(app)
             .get("/api/articles/5/comments?sort_by=votes")
             .expect(200)
@@ -256,7 +256,7 @@ describe("app", () => {
               expect(comments).to.be.sortedBy("votes", { descending: true });
             });
         });
-        it("default sort_by is created_at", () => {
+        it("status: 200 default sort_by is created_at", () => {
           return request(app)
             .get("/api/articles/5/comments")
             .expect(200)
@@ -266,7 +266,7 @@ describe("app", () => {
               });
             });
         });
-        it("accepts a query to order ascending", () => {
+        it("status: 200 accepts a query to order ascending", () => {
           return request(app)
             .get("/api/articles/5/comments?order=asc")
             .expect(200)
@@ -274,7 +274,7 @@ describe("app", () => {
               expect(comments).to.be.ascendingBy("created_at");
             });
         });
-        it("default order is descending", () => {
+        it("status: 200 default order is descending", () => {
           return request(app)
             .get("/api/articles/5/comments")
             .expect(200)
@@ -282,7 +282,7 @@ describe("app", () => {
               expect(comments).to.be.descendingBy("created_at");
             });
         });
-        it("status: 404 not found if given valid but non-existent article_id", () => {
+        it("status: 404 if given valid but non-existent article_id", () => {
           return request(app)
             .get("/api/articles/9999999/comments")
             .expect(404)
@@ -290,7 +290,7 @@ describe("app", () => {
               expect(msg).to.equal("article not found");
             });
         });
-        it("status: 400 bad request if given invalid article_id", () => {
+        it("status: 400 if given invalid article_id", () => {
           return request(app)
             .get("/api/articles/not-id/comments")
             .expect(400)
@@ -318,7 +318,7 @@ describe("app", () => {
     });
     describe("/api/articles", () => {
       describe("GET", () => {
-        it("returned articles have the correct keys", () => {
+        it("status: 200 returned articles have the correct keys", () => {
           return request(app)
             .get("/api/articles")
             .expect(200)
@@ -336,7 +336,7 @@ describe("app", () => {
               });
             });
         });
-        it("accepts a query to sort by any valid column", () => {
+        it("status: 200 accepts a query to sort by any valid column", () => {
           return request(app)
             .get("/api/articles?sort_by=votes")
             .expect(200)
@@ -344,7 +344,7 @@ describe("app", () => {
               expect(articles).to.be.sortedBy("votes", { descending: true });
             });
         });
-        it("default sort_by is created_at", () => {
+        it("status: 200 default sort_by is created_at", () => {
           return request(app)
             .get("/api/articles")
             .expect(200)
@@ -354,7 +354,7 @@ describe("app", () => {
               });
             });
         });
-        it("accepts a query to order ascending", () => {
+        it("status: 200 accepts a query to order ascending", () => {
           return request(app)
             .get("/api/articles?order=asc")
             .expect(200)
@@ -362,7 +362,7 @@ describe("app", () => {
               expect(articles).to.be.ascendingBy("created_at");
             });
         });
-        it("default order is descending", () => {
+        it("status: 200 default order is descending", () => {
           return request(app)
             .get("/api/articles")
             .expect(200)
@@ -370,7 +370,7 @@ describe("app", () => {
               expect(articles).to.be.descendingBy("created_at");
             });
         });
-        it("accepts a query to filter articles by specified author", () => {
+        it("status: 200 accepts a query to filter articles by specified author", () => {
           return request(app)
             .get("/api/articles?author=rogersop")
             .expect(200)
@@ -380,7 +380,7 @@ describe("app", () => {
               });
             });
         });
-        it("accepts a query to filter articles by specified topic", () => {
+        it("status: 200 accepts a query to filter articles by specified topic", () => {
           return request(app)
             .get("/api/articles?topic=cats")
             .expect(200)
@@ -436,6 +436,65 @@ describe("app", () => {
             .expect(404)
             .then(({ body: { msg } }) => {
               expect(msg).to.equal("articles not found");
+            });
+        });
+      });
+    });
+    describe("/api/comments/:comment_id", () => {
+      describe.only("PATCH", () => {
+        it("status: 200 updates a comment's votes property and returns the comment object", () => {
+          return request(app)
+            .patch("/api/comments/1")
+            .send({ inc_votes: 5 })
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).to.deep.equal({
+                comment: {
+                  comment_id: 1,
+                  author: "butter_bridge",
+                  article_id: 9,
+                  votes: 21,
+                  created_at: "2017-11-22T12:36:03.389Z",
+                  body:
+                    "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                },
+              });
+            });
+        });
+        it("status: 404 not found if given valid but non-existent comment_id", () => {
+          return request(app)
+            .patch("/api/comments/9999999")
+            .send({ inc_votes: 5 })
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("comment not found");
+            });
+        });
+        it("status: 400 if given invalid comment_id", () => {
+          return request(app)
+            .patch("/api/comments/not-id")
+            .send({ inc_votes: 5 })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("invalid data type");
+            });
+        });
+        it("status: 400 for invalid property given", () => {
+          return request(app)
+            .patch("/api/comments/1")
+            .send({ bananas: 10 })
+            .expect(400)
+            .then((response) => {
+              expect(response.body.msg).to.equal("bad request");
+            });
+        });
+        it("status: 400 invalid data type given for inc_votes", () => {
+          return request(app)
+            .patch("/api/comments/1")
+            .send({ inc_votes: "five" })
+            .expect(400)
+            .then((response) => {
+              expect(response.body.msg).to.equal("invalid data type");
             });
         });
       });
