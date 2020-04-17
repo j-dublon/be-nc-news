@@ -61,12 +61,8 @@ exports.sendAllArticles = (req, res, next) => {
     checkTopicExists(topic),
     fetchAllArticles(sort_by, order, author, topic),
   ])
-    .then(([, articles]) => {
-      if (articles === undefined) {
-        res.status(200).send({ articles: [] });
-      } else {
-        res.status(200).send({ articles });
-      }
+    .then(([, , articles]) => {
+      res.status(200).send({ articles });
     })
     .catch(next);
 };
