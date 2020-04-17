@@ -20,7 +20,28 @@ Node.js (13.13.0) is necessary to run this project, as is PostgreSQL (12.2). For
 
    `npm i -D mocha chai chai-sorted supertest`
 
-4. This project includes two databases: one **test database** for testing purposes and one **dev database**.
+4. Create a `knexfile.js` and add in the following code, **ensuring that the file paths are accurate for your system**. Unix users should add their username and password where indicated (not necessary for Mac OS users).
+
+   ```
+   const ENV = process.env.NODE_ENV || "development";
+
+   const baseConfig = {
+        client: "pg",
+        migrations: { directory: "./db/migrations" },
+        seeds: { directory: "./db/seeds" },
+        // username
+        // password
+   };
+
+   const customConfig = {
+        development: { connection: { database: "nc_news" } },
+        test: { connection: { database: "nc_news_test" } },
+   };
+
+   module.exports = { ...baseConfig, ...customConfig[ENV] };
+   ```
+
+5. This project includes two databases: one **test database** for testing purposes and one **dev database**.
 
    - First setup your databases using the following command:
 
