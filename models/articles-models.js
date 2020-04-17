@@ -35,9 +35,15 @@ exports.fetchAllArticles = (
   sort_by = "created_at",
   order = "desc",
   author,
-  topic
+  topic,
+  limit = "10",
+  page = "1"
 ) => {
-  if (order !== "asc" && order !== "desc") {
+  if (
+    (order !== "asc" && order !== "desc") ||
+    limit.match(/^[0-9]+$/) === null ||
+    page.match(/^[0-9]+$/) === null
+  ) {
     return Promise.reject({ status: 400, msg: "bad request" });
   } else {
     return connection
@@ -59,6 +65,12 @@ exports.fetchAllArticles = (
       })
       .modify((query) => {
         if (topic) query.where("articles.topic", topic);
+      })
+      .modify((query) => {
+        if (limit) query.limit(limit);
+      })
+      .modify((query) => {
+        if (page) query.limit(limit).offset((page - 1) * 10);
       });
   }
 };

@@ -55,11 +55,11 @@ exports.sendArticleComments = (req, res, next) => {
 };
 
 exports.sendAllArticles = (req, res, next) => {
-  const { sort_by, order, author, topic } = req.query;
+  const { sort_by, order, author, topic, limit, p } = req.query;
   Promise.all([
     checkAuthorExists(author),
     checkTopicExists(topic),
-    fetchAllArticles(sort_by, order, author, topic),
+    fetchAllArticles(sort_by, order, author, topic, limit, p),
   ])
     .then(([, , articles]) => {
       res.status(200).send({ articles });

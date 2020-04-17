@@ -417,7 +417,7 @@ describe("app", () => {
             .get("/api/articles")
             .expect(200)
             .then(({ body: { articles } }) => {
-              expect(articles.length).to.equal(12);
+              expect(articles.length).to.equal(10);
               articles.forEach((article) => {
                 expect(article).to.have.all.keys(
                   "author",
@@ -501,6 +501,31 @@ describe("app", () => {
               expect(articles.length).to.equal(0);
             });
         });
+        it("status: 200 accepts a limit query and returns the specified number of articles", () => {
+          return request(app)
+            .get("/api/articles?limit=3")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles.length).to.equal(3);
+            });
+        });
+        it("status: 200 responds with a default limit of 10 articles", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles.length).to.equal(10);
+            });
+        });
+        it("status: 200 accepts a page query to view articles by which page of results they appear on", () => {
+          return request(app)
+            .get("/api/articles?sort_by=article_id&p=2")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles.length).to.equal(2);
+              expect(articles[1].article_id).to.equal(1);
+            });
+        });
         it("status: 400 for an invalid sort_by query", () => {
           return request(app)
             .get("/api/articles?sort_by=banana")
@@ -512,6 +537,22 @@ describe("app", () => {
         it("status: 400 for an invalid order query", () => {
           return request(app)
             .get("/api/articles?order=sideways")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("bad request");
+            });
+        });
+        it("status: 400 for an invalid limit query", () => {
+          return request(app)
+            .get("/api/articles?limit=ten15")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("bad request");
+            });
+        });
+        it("status: 400 for an invalid page query", () => {
+          return request(app)
+            .get("/api/articles?p=two")
             .expect(400)
             .then(({ body: { msg } }) => {
               expect(msg).to.equal("bad request");
