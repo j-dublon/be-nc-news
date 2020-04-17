@@ -1,35 +1,65 @@
-(H1) J Dublon NC News
+# J Dublon - NC News
 
-(One paragraph of project description - you can find the hosted version here - link)
+This API utilises Express and Knex to communicate with a PostgreSQL database. It serves articles, comments, topics and users, and enables the posting and deleting of comments, and the amending of "vote" property of both comments and articles.
 
-(H2) Getting Started
+## Getting Started
 
 The instructions below will allow you to get a copy of this project up and running on your local machine for development and testing purposes.
 
-(H3) Prerequisites
+Node.js (13.13.0) is necessary to run this project, as is PostgreSQL (12.2). For installing dependencies and dev-dependencies, see below.
 
-(What software and how to install - minimum versions of node.js and postgres required)
+## Installing
 
-(H3) Installing
+1. To clone the project:
 
-(Step-by-step of how to get the project running - give instruction, then code below. Cloning, dependencies, seeding local database)
+2. Installing dependencies: Express, Knex and PostgreSQL can all be installed with the following command:
 
-(H2) Running the tests
+   `npm i express knex pg`
 
-(Explain how to run all tests)
+3. Installing dev-dependencies (for testing purposes only): Mocha, Chai, Chai-Sorted and Supertest should be installed using the following command:
 
-(H2) Built with
+   `npm i -D mocha chai chai-sorted supertest`
 
-(Software name - used for)
+4. This project includes two databases: one **test database** for testing purposes and one **dev database**.
 
-(H2) Contributing
+   - First setup your databases using the following command:
 
-Please see here (link) for an excellent guide on how to contribute.
+     `npm run setup-dbs`
 
-(H2) Authors
+   - Then seed the database you wish to work with:
+
+     - `npm run seed-dev`
+     - **or**
+     - `npm run seed-test`
+
+## Running the tests
+
+To test the util functions:
+
+`npm run test-utils`
+
+To test the server:
+
+`npm run test`
+
+## Built with:
+
+- **Node.js** - runtime environment
+- **Express** - application framework
+- **Knex** - SQL query builder
+- **PostgreSQL** - relational database management system
+- **Mocha** - testing framework
+- **Chai** and **Chai-sorted** - testing assertion library
+- **Supertest** - http testing assertion library
+
+## Contributing
+
+[Please see here](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for an excellent guide on how to contribute.
+
+## Authors
 
 Jodi Dublon
 
-(H2) Acknowledgements
+## Acknowledgements
 
-(Thanks northcoders staff)
+Many thanks to all the staff at Northcoders.
