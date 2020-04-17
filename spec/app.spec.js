@@ -295,12 +295,12 @@ describe("app", () => {
         });
       });
       describe("GET", () => {
-        it("status: 200 should return all comments associated with an article", () => {
+        it("status: 200 should return all comments associated with an article (up to default limit 10)", () => {
           return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
             .then(({ body: { comments } }) => {
-              expect(comments.length).to.equal(13);
+              expect(comments.length).to.equal(10);
             });
         });
         it("status: 200 responds with empty array when article exists but has no comments", () => {
@@ -362,6 +362,31 @@ describe("app", () => {
               expect(comments).to.be.descendingBy("created_at");
             });
         });
+        it("status: 200 accepts a limit query and responds with specified number of comments", () => {
+          return request(app)
+            .get("/api/articles/1/comments?limit=3")
+            .expect(200)
+            .then(({ body: { comments } }) => {
+              expect(comments.length).to.equal(3);
+            });
+        });
+        it("status: 200 responds with a default limit of 10 comments", () => {
+          return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body: { comments } }) => {
+              expect(comments.length).to.equal(10);
+            });
+        });
+        it("status: 200 accepts a page query to view comments by which page of results they appear on", () => {
+          return request(app)
+            .get("/api/articles/1/comments?sort_by=comment_id&p=2")
+            .expect(200)
+            .then(({ body: { comments } }) => {
+              expect(comments.length).to.equal(3);
+              expect(comments[2].comment_id).to.equal(2);
+            });
+        });
         it("status: 404 if given valid but non-existent article_id", () => {
           return request(app)
             .get("/api/articles/9999999/comments")
@@ -389,6 +414,22 @@ describe("app", () => {
         it("status: 400 for an invalid order query", () => {
           return request(app)
             .get("/api/articles/1/comments?order=sideways")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("bad request");
+            });
+        });
+        it("status: 400 for an invalid limit query", () => {
+          return request(app)
+            .get("/api/articles/1/comments?limit=thirty3")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("bad request");
+            });
+        });
+        it("status: 400 for an invalid page query", () => {
+          return request(app)
+            .get("/api/articles/1/comments?sort_by=comment_id&p=two")
             .expect(400)
             .then(({ body: { msg } }) => {
               expect(msg).to.equal("bad request");
@@ -501,7 +542,7 @@ describe("app", () => {
               expect(articles.length).to.equal(0);
             });
         });
-        it("status: 200 accepts a limit query and returns the specified number of articles", () => {
+        it("status: 200 accepts a limit query and responds with specified number of articles", () => {
           return request(app)
             .get("/api/articles?limit=3")
             .expect(200)

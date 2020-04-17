@@ -43,10 +43,10 @@ exports.insertArticleComment = (req, res, next) => {
 
 exports.sendArticleComments = (req, res, next) => {
   const { article_id } = req.params;
-  const { sort_by, order } = req.query;
+  const { sort_by, order, limit, p } = req.query;
   Promise.all([
     checkArticleExists(article_id),
-    fetchArticleComments(article_id, sort_by, order),
+    fetchArticleComments(article_id, sort_by, order, limit, p),
   ])
     .then(([, comments]) => {
       res.status(200).send({ comments });

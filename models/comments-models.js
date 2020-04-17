@@ -47,9 +47,15 @@ exports.addArticleComment = (article_id, username, body) => {
 exports.fetchArticleComments = (
   article_id,
   sort_by = "created_at",
-  order = "desc"
+  order = "desc",
+  limit = "10",
+  page = "1"
 ) => {
-  if (order !== "asc" && order !== "desc") {
+  if (
+    (order !== "asc" && order !== "desc") ||
+    limit.match(/^[0-9]+$/) === null ||
+    page.match(/^[0-9]+$/) === null
+  ) {
     return Promise.reject({ status: 400, msg: "bad request" });
   } else {
     return connection
@@ -63,7 +69,13 @@ exports.fetchArticleComments = (
       )
       .from("comments")
       .where("comments.article_id", "=", article_id)
-      .orderBy(sort_by, order);
+      .orderBy(sort_by, order)
+      .modify((query) => {
+        if (limit) query.limit(limit);
+      })
+      .modify((query) => {
+        if (page) query.limit(limit).offset((page - 1) * 10);
+      });
   }
 };
 
