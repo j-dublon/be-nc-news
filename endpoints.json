@@ -4,13 +4,89 @@
   },
   "GET /api/topics": {
     "description": "serves an array of all topics",
-    "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+      "topics": [
+        { "slug": "football", "description": "Footie!" },
+        { "slug": "fruit", "description": "bananas" }
+      ]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "serves a single user by username",
+    "exampleResponse": {
+      "user": {
+        "username": "awesomename",
+        "name": "Jemima",
+        "avatar_url": "http://awesomeperson"
+      }
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves a single article by article_id",
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "article title",
+        "body": "some interesting stuff",
+        "votes": 10,
+        "topic": "stuff",
+        "author": "somebody",
+        "created_at": "2018-11-15T12:21:54.171Z"
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "updates a single article's votes and responds with updated article",
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "article title",
+        "body": "some interesting stuff",
+        "votes": 30,
+        "topic": "stuff",
+        "author": "somebody",
+        "created_at": "2018-11-15T12:21:54.171Z"
+      }
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "adds a comment by article id and responds with posted comment",
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 1,
+        "article_id": 9,
+        "body": "what an amazing article",
+        "votes": 5,
+        "author": "somebody else",
+        "created_at": "2018-11-15T12:21:54.171Z"
+      }
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of comments by article id",
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 1,
+          "article_id": 9,
+          "body": "what an amazing article",
+          "votes": 5,
+          "author": "somebody else",
+          "created_at": "2018-11-15T12:21:54.171Z"
+        },
+        {
+          "comment_id": 7,
+          "article_id": 9,
+          "body": "what a load of rubbish",
+          "votes": 0,
+          "author": "grumpy person",
+          "created_at": "2018-12-15T12:21:54.171Z"
+        }
+      ]
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
+    "description": "serves an array of all articles",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
@@ -19,9 +95,33 @@
           "topic": "cooking",
           "author": "weegembump",
           "body": "Text from the article..",
-          "created_at": 1527695953341
+          "created_at": "2019-05-15T12:21:54.171Z"
+        },
+        {
+          "title": "Veganism",
+          "topic": "cooking",
+          "author": "vegan person",
+          "body": "Something about food",
+          "created_at": "2019-07-15T12:21:54.171Z"
         }
       ]
     }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates a single comment's votes and responds with updated comment",
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 1,
+        "article_id": 9,
+        "body": "what an amazing article",
+        "votes": 10,
+        "author": "somebody else",
+        "created_at": "2018-11-15T12:21:54.171Z"
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a single comment and responds with 204 status only",
+    "exampleResponse": {}
   }
 }

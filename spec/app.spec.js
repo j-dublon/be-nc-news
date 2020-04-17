@@ -18,6 +18,26 @@ describe("app", () => {
       });
   });
   describe("/api", () => {
+    describe("GET", () => {
+      it("status 200: responds with a json of all available endpoints on this API", () => {
+        return request(app)
+          .get("/api")
+          .expect(200)
+          .expect("Content-Type", /json/);
+      });
+      it("status: 405 for invalid methods", () => {
+        const invalidMethods = ["patch", "post", "delete"];
+        const methodPromises = invalidMethods.map((method) => {
+          return request(app)
+            [method]("/api")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("method not allowed");
+            });
+        });
+        return Promise.all(methodPromises);
+      });
+    });
     describe("/api/topics", () => {
       describe("GET", () => {
         it("status: 200 returned topics should have correct keys", () => {
