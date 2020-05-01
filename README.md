@@ -73,6 +73,10 @@ To test the server:
 - **Chai** and **Chai-sorted** - testing assertion library
 - **Supertest** - http testing assertion library
 
+## Hosted at:
+
+[Herokuapp](https://j-dublon-nc-news.herokuapp.com/)
+
 ## Contributing
 
 [Please see here](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for an excellent guide on how to contribute.
