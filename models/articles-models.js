@@ -36,7 +36,7 @@ exports.fetchAllArticles = (
   order = "desc",
   author,
   topic,
-  limit = "10",
+  limit = "9",
   page = "1"
 ) => {
   if (

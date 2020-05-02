@@ -550,12 +550,12 @@ describe("app", () => {
               expect(articles.length).to.equal(3);
             });
         });
-        it("status: 200 responds with a default limit of 10 articles", () => {
+        it("status: 200 responds with a default limit of 9 articles", () => {
           return request(app)
             .get("/api/articles")
             .expect(200)
             .then(({ body: { articles } }) => {
-              expect(articles.length).to.equal(10);
+              expect(articles.length).to.equal(9);
             });
         });
         it("status: 200 accepts a page query to view articles by which page of results they appear on", () => {
