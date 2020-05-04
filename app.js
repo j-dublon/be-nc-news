@@ -14,9 +14,9 @@ app.use(express.json());
 
 app.use("/api", apiRouter);
 
-app.all("/*", handleInvalidPaths);
 app.use(handlePSQLErrors);
 app.use(handleCustoms);
 app.use(handle500s);
+app.all("/*", handleInvalidPaths);
 
 module.exports = app;
