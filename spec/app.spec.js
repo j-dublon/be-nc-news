@@ -458,7 +458,7 @@ describe("app", () => {
             .get("/api/articles")
             .expect(200)
             .then(({ body: { articles } }) => {
-              expect(articles.length).to.equal(10);
+              expect(articles.length).to.equal(9);
               articles.forEach((article) => {
                 expect(article).to.have.all.keys(
                   "author",
