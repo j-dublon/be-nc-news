@@ -2,6 +2,7 @@ const {
   fetchArticle,
   modifyArticle,
   fetchAllArticles,
+  fetchTotalCount,
   checkAuthorExists,
   checkTopicExists,
 } = require("../models/articles-models");
@@ -60,9 +61,11 @@ exports.sendAllArticles = (req, res, next) => {
     checkAuthorExists(author),
     checkTopicExists(topic),
     fetchAllArticles(sort_by, order, author, topic, limit, p),
+    fetchTotalCount(),
   ])
-    .then(([, , articles]) => {
-      res.status(200).send({ articles });
+    .then(([, , articles, total_count]) => {
+      console.log(total_count);
+      res.status(200).send({ articles, total_count });
     })
     .catch(next);
 };

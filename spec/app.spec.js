@@ -472,6 +472,14 @@ describe("app", () => {
               });
             });
         });
+        it.only("status: 200 returns a total_count of articles disregarding default limit", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { total_count } }) => {
+              expect(total_count).to.equal(12);
+            });
+        });
         it("status: 200 accepts a query to sort by any valid column", () => {
           return request(app)
             .get("/api/articles?sort_by=votes")

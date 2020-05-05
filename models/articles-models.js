@@ -75,6 +75,15 @@ exports.fetchAllArticles = (
   }
 };
 
+exports.fetchTotalCount = () => {
+  return connection("articles")
+    .count({ article_count: "article_id" })
+    .then((count) => {
+      const total_count = Number(count[0].article_count);
+      return total_count;
+    });
+};
+
 exports.checkAuthorExists = (author) => {
   if (author) {
     return connection
