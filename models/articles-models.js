@@ -75,9 +75,12 @@ exports.fetchAllArticles = (
   }
 };
 
-exports.fetchTotalCount = () => {
+exports.fetchTotalCount = (topic) => {
   return connection("articles")
     .count({ article_count: "article_id" })
+    .modify((query) => {
+      if (topic) query.where("articles.topic", topic);
+    })
     .then((count) => {
       const total_count = Number(count[0].article_count);
       return total_count;

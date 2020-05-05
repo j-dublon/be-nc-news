@@ -61,10 +61,9 @@ exports.sendAllArticles = (req, res, next) => {
     checkAuthorExists(author),
     checkTopicExists(topic),
     fetchAllArticles(sort_by, order, author, topic, limit, p),
-    fetchTotalCount(),
+    fetchTotalCount(topic),
   ])
     .then(([, , articles, total_count]) => {
-      console.log(total_count);
       res.status(200).send({ articles, total_count });
     })
     .catch(next);

@@ -472,7 +472,7 @@ describe("app", () => {
               });
             });
         });
-        it.only("status: 200 returns a total_count of articles disregarding default limit", () => {
+        it("status: 200 returns a total_count of articles disregarding default limit", () => {
           return request(app)
             .get("/api/articles")
             .expect(200)
