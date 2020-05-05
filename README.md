@@ -10,7 +10,9 @@ Node.js (13.13.0) is necessary to run this project, as is PostgreSQL (12.2). For
 
 ## Installing
 
-1. To clone the project:
+1. Fork the project then clone into a suitable folder using:
+
+   `git clone your-forked-url`
 
 2. Installing dependencies: Express, Knex and PostgreSQL can all be installed with the following command:
 
@@ -81,7 +83,7 @@ To test the server:
 
 [Please see here](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for an excellent guide on how to contribute.
 
-## Authors
+## Author
 
 Jodi Dublon
 
