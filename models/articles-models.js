@@ -70,7 +70,7 @@ exports.fetchAllArticles = (
         if (limit) query.limit(limit);
       })
       .modify((query) => {
-        if (page) query.limit(limit).offset((page - 1) * 10);
+        if (page) query.limit(limit).offset((page - 1) * 9);
       });
   }
 };
