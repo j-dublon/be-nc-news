@@ -79,6 +79,16 @@ exports.fetchArticleComments = (
   }
 };
 
+exports.fetchCommentCount = (article_id) => {
+  return connection("comments")
+    .where("article_id", "=", article_id)
+    .count({ comment_count: "comment_id" })
+    .then((count) => {
+      const total_count = Number(count[0].comment_count);
+      return total_count;
+    });
+};
+
 exports.checkArticleExists = (article_id) => {
   return connection
     .select("body")

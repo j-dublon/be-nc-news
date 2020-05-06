@@ -387,6 +387,14 @@ describe("app", () => {
               expect(comments[2].comment_id).to.equal(2);
             });
         });
+        it("status: 200 returns a total_count of comments disregarding default limit", () => {
+          return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body: { total_count } }) => {
+              expect(total_count).to.equal(13);
+            });
+        });
         it("status: 404 if given valid but non-existent article_id", () => {
           return request(app)
             .get("/api/articles/9999999/comments")
@@ -571,8 +579,8 @@ describe("app", () => {
             .get("/api/articles?sort_by=article_id&p=2")
             .expect(200)
             .then(({ body: { articles } }) => {
-              expect(articles.length).to.equal(2);
-              expect(articles[1].article_id).to.equal(1);
+              expect(articles.length).to.equal(3);
+              expect(articles[1].article_id).to.equal(2);
             });
         });
         it("status: 400 for an invalid sort_by query", () => {
