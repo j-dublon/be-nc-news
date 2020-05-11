@@ -6,6 +6,7 @@ const {
   insertArticleComment,
   sendArticleComments,
   sendAllArticles,
+  insertArticle,
 } = require("../controllers/articles-controllers");
 const { send405Error } = require("../errors");
 
@@ -21,6 +22,10 @@ articlesRouter
   .get(sendArticleComments)
   .all(send405Error);
 
-articlesRouter.route("/").get(sendAllArticles).all(send405Error);
+articlesRouter
+  .route("/")
+  .get(sendAllArticles)
+  .post(insertArticle)
+  .all(send405Error);
 
 module.exports = articlesRouter;

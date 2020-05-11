@@ -632,9 +632,33 @@ describe("app", () => {
             });
         });
       });
+      describe("POST", () => {
+        it("status: 201 inserts a new article and responds with the article object", () => {
+          return request(app)
+            .post("/api/articles")
+            .send({
+              username: "rogersop",
+              title: "some article",
+              body: "some info",
+              topic: "mitch",
+            })
+            .expect(201)
+            .then(({ body: { article } }) => {
+              expect(article).to.have.all.keys(
+                "author",
+                "title",
+                "article_id",
+                "topic",
+                "created_at",
+                "votes",
+                "body"
+              );
+            });
+        });
+      });
       describe("invalid methods", () => {
         it("status: 405 for invalid methods", () => {
-          const invalidMethods = ["post", "patch", "delete"];
+          const invalidMethods = ["patch", "delete"];
           const methodPromises = invalidMethods.map((method) => {
             return request(app)
               [method]("/api/articles")

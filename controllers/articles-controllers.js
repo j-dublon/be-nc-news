@@ -5,6 +5,7 @@ const {
   fetchArticleCount,
   checkAuthorExists,
   checkTopicExists,
+  addArticle,
 } = require("../models/articles-models");
 
 const {
@@ -67,6 +68,15 @@ exports.sendAllArticles = (req, res, next) => {
   ])
     .then(([, , articles, total_count]) => {
       res.status(200).send({ articles, total_count });
+    })
+    .catch(next);
+};
+
+exports.insertArticle = (req, res, next) => {
+  const { topic, username, title, body } = req.body;
+  addArticle(username, title, body, topic)
+    .then((article) => {
+      res.status(201).send({ article });
     })
     .catch(next);
 };

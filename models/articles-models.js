@@ -117,3 +117,14 @@ exports.checkTopicExists = (topic) => {
       });
   }
 };
+
+exports.addArticle = (username, title, body, topic) => {
+  const article = { author: username, title, body, topic };
+  return connection
+    .insert(article)
+    .into("articles")
+    .returning("*")
+    .then((article) => {
+      return article[0];
+    });
+};
