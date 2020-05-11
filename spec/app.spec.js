@@ -655,6 +655,47 @@ describe("app", () => {
               );
             });
         });
+        it("status: 400 if article is posted to non-existent topic", () => {
+          return request(app)
+            .post("/api/articles")
+            .send({
+              username: "rogersop",
+              title: "some article",
+              body: "some info",
+              topic: "transylvania",
+            })
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("topic does not exist");
+            });
+        });
+        it("status: 400 invalid data type provided", () => {
+          return request(app)
+            .post("/api/articles")
+            .send({
+              username: 384,
+              title: "some article",
+              body: "some info",
+              topic: "mitch",
+            })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("invalid data type");
+            });
+        });
+        it("status: 400 if missing a non-nullable key", () => {
+          return request(app)
+            .post("/api/articles")
+            .send({
+              username: "rogersop",
+              body: "some info",
+              topic: "mitch",
+            })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("missing property");
+            });
+        });
       });
       describe("invalid methods", () => {
         it("status: 405 for invalid methods", () => {

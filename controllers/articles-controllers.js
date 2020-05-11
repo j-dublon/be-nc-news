@@ -74,8 +74,11 @@ exports.sendAllArticles = (req, res, next) => {
 
 exports.insertArticle = (req, res, next) => {
   const { topic, username, title, body } = req.body;
-  addArticle(username, title, body, topic)
-    .then((article) => {
+  Promise.all([
+    checkTopicExists(topic),
+    addArticle(username, title, body, topic),
+  ])
+    .then(([, article]) => {
       res.status(201).send({ article });
     })
     .catch(next);

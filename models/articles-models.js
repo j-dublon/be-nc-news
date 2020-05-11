@@ -120,11 +120,20 @@ exports.checkTopicExists = (topic) => {
 
 exports.addArticle = (username, title, body, topic) => {
   const article = { author: username, title, body, topic };
-  return connection
-    .insert(article)
-    .into("articles")
-    .returning("*")
-    .then((article) => {
-      return article[0];
-    });
+  if (
+    (typeof article.author !== "string" && article.author !== undefined) ||
+    (typeof article.title !== "string" && article.title !== undefined) ||
+    (typeof article.body !== "string" && article.body !== undefined) ||
+    (typeof article.topic !== "string" && article.topic !== undefined)
+  ) {
+    return Promise.reject({ status: 400, msg: "invalid data type" });
+  } else {
+    return connection
+      .insert(article)
+      .into("articles")
+      .returning("*")
+      .then((article) => {
+        return article[0];
+      });
+  }
 };
