@@ -6,6 +6,7 @@ const {
   checkAuthorExists,
   checkTopicExists,
   addArticle,
+  removeArticle,
 } = require("../models/articles-models");
 
 const {
@@ -80,6 +81,15 @@ exports.insertArticle = (req, res, next) => {
   ])
     .then(([, article]) => {
       res.status(201).send({ article });
+    })
+    .catch(next);
+};
+
+exports.deleteArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  removeArticle(article_id)
+    .then(() => {
+      res.status(204).send();
     })
     .catch(next);
 };

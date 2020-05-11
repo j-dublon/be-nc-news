@@ -224,18 +224,43 @@ describe("app", () => {
             });
         });
       });
+      describe("DELETE", () => {
+        it("status: 204 deletes an article by id", () => {
+          return request(app)
+            .del("/api/articles/2")
+            .expect(204)
+            .then(() => {
+              return connection("articles").where({ article_id: 2 });
+            })
+            .then((article) => {
+              expect(article.length).to.equal(0);
+            });
+        });
+        it("status: 404 if given valid but non-existent article_id", () => {
+          return request(app)
+            .del("/api/articles/9999999")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("article not found");
+            });
+        });
+        it("status: 400 if given invalid article_id", () => {
+          return request(app)
+            .del("/api/articles/not-id")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("invalid data type");
+            });
+        });
+      });
       describe("invalid methods", () => {
         it("status: 405 for invalid methods", () => {
-          const invalidMethods = ["post", "delete"];
-          const methodPromises = invalidMethods.map((method) => {
-            return request(app)
-              [method]("/api/articles/1")
-              .expect(405)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal("method not allowed");
-              });
-          });
-          return Promise.all(methodPromises);
+          return request(app)
+            .post("/api/articles/1")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("method not allowed");
+            });
         });
       });
     });

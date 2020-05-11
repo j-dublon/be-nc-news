@@ -137,3 +137,15 @@ exports.addArticle = (username, title, body, topic) => {
       });
   }
 };
+
+exports.removeArticle = (article_id) => {
+  return connection("articles")
+    .where("article_id", "=", article_id)
+    .del()
+    .returning("*")
+    .then((article) => {
+      if (article.length === 0) {
+        return Promise.reject({ status: 404, msg: "article not found" });
+      }
+    });
+};
