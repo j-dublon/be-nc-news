@@ -3,7 +3,7 @@
     "description": "serves up a json representation of all the available endpoints of the api"
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
+    "description": "serves an array of all the topics",
     "exampleResponse": {
       "topics": [
         { "slug": "football", "description": "Footie!" },
